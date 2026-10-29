@@ -1,5 +1,7 @@
 # RaftKV 测试平台 · 设计文档
 
+> 注：代码已拆分到独立仓库 `raftlab/`，被测项目只保留 `kvbench` / `kvstatus` / `Status` RPC 等 C++ 侧改动（见 `docs/integration.md`）。本文档保留为设计记录。
+
 > 被测系统：`KVstorageBaseRaft-cpp`（Raft + 跳表 KV）
 > 目标：性能基准 + 故障/混沌测试 + 可复现实验记录 + 回归判定
 > 形态：CLI 驱动的本地实验台（无服务端、无数据库）
