@@ -1,0 +1,68 @@
+apiVersion: raftlab/v1
+kind: Scenario
+metadata:
+  name: baseline-kill-leader
+  description: 3 节点基线压测，第 10 秒 kill 掉 leader，校验可用性
+  labels:
+    suite: p1
+
+spec:
+  seed: 42
+  cluster:
+    nodes: 3
+    maxRaftState: 50000
+    build: Release
+    logLevel: "off"   # 必须加引号：YAML 1.1 会把裸 off 解析成布尔 false
+  defaults:
+    timeout: 30s
+    onError: abort
+
+  steps:
+    - id: up
+      action: cluster.up
+
+    - id: ready
+      action: wait.ready
+      require: leader
+      timeout: 20s
+
+    - id: load
+      action: workload.run
+      loadId: L1
+      duration: 30s
+      warmup: 5s
+      concurrency: 4
+      mix: {put: 20, get: 70, append: 10}
+      keySpace: 1000
+      valueSize: 128
+      background: true
+
+    - id: kill
+      action: chaos.inject
+      fault: kill
+      target: leader
+      after: {ref: load, elapsed: 10s}
+      timeout: 5s
+
+    - id: join
+      action: workload.wait
+      ref: load
+      timeout: 60s
+
+    - id: avail
+      action: assert.availability
+      # 3 节点杀 1 个仍有多数派，但选主窗口内会有约 8% 的操作失败（客户端只重试 3 个节点）
+      maxGapMs: 2000
+      maxErrorRate: 0.10
+
+    - id: down
+      action: cluster.down
+      onError: continue
+
+  assertions:
+    - metric: latency.p99
+      op: "<="
+      value: 100ms
+    - metric: errors.rate
+      op: "<="
+      value: 0.10

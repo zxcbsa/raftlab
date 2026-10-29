@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raftlab.local/schemas/metrics.schema.json",
+  "title": "Metrics sample",
+  "type": "object",
+  "required": ["ts", "tRelMs", "node", "cpuPct", "rssMB"],
+  "additionalProperties": false,
+  "properties": {
+    "ts": { "type": "string", "format": "date-time" },
+    "tRelMs": { "type": "integer", "minimum": 0 },
+    "node": { "type": "integer", "minimum": 0 },
+    "cpuPct": { "type": "number", "minimum": 0 },
+    "rssMB": { "type": "number", "minimum": 0 },
+    "term": { "type": ["integer", "null"], "minimum": 0 },
+    "isLeader": { "type": ["boolean", "null"] },
+    "commitIndex": { "type": ["integer", "null"], "minimum": 0 },
+    "logSize": { "type": ["integer", "null"], "minimum": 0 },
+    "snapshotIndex": { "type": ["integer", "null"], "minimum": 0 },
+    "sampled": { "type": "boolean" }
+  }
+}

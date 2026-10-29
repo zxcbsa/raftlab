@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raftlab.local/schemas/result.schema.json",
+  "title": "Workload result",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "runId",
+    "loadId",
+    "startedAt",
+    "endedAt",
+    "durationMs",
+    "warmupMs",
+    "config",
+    "counts",
+    "errors",
+    "throughput",
+    "latencyMs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "runId": { "type": "string" },
+    "loadId": { "type": "string" },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "endedAt": { "type": "string", "format": "date-time" },
+    "durationMs": { "type": "integer", "minimum": 1 },
+    "warmupMs": { "type": "integer", "minimum": 0 },
+    "config": {
+      "type": "object",
+      "required": ["concurrency", "mix", "keySpace", "valueSize"],
+      "additionalProperties": false,
+      "properties": {
+        "concurrency": { "type": "integer", "minimum": 1 },
+        "mix": { "$ref": "#/definitions/mix" },
+        "keySpace": { "type": "integer", "minimum": 1 },
+        "valueSize": { "type": "integer", "minimum": 1 },
+        "rateLimit": { "type": ["number", "null"], "exclusiveMinimum": 0 }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["total", "ok", "error", "byOp"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "ok": { "type": "integer", "minimum": 0 },
+        "error": { "type": "integer", "minimum": 0 },
+        "byOp": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "errors": {
+      "type": "object",
+      "required": ["rate", "byType"],
+      "additionalProperties": false,
+      "properties": {
+        "rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "byType": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "throughput": {
+      "type": "object",
+      "required": ["total", "byOp"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "number", "minimum": 0 },
+        "byOp": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "latencyMs": {
+      "type": "object",
+      "required": ["all"],
+      "additionalProperties": false,
+      "properties": {
+        "all": { "$ref": "#/definitions/bucket" },
+        "get": { "$ref": "#/definitions/bucket" },
+        "put": { "$ref": "#/definitions/bucket" },
+        "append": { "$ref": "#/definitions/bucket" }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "definitions": {
+    "mix": {
+      "type": "object",
+      "required": ["put", "get", "append"],
+      "additionalProperties": false,
+      "properties": {
+        "put": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "get": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "append": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "bucket": {
+      "type": "object",
+      "required": ["p50", "p90", "p95", "p99", "p999", "max"],
+      "additionalProperties": false,
+      "properties": {
+        "p50": { "type": "number", "minimum": 0 },
+        "p90": { "type": "number", "minimum": 0 },
+        "p95": { "type": "number", "minimum": 0 },
+        "p99": { "type": "number", "minimum": 0 },
+        "p999": { "type": "number", "minimum": 0 },
+        "max": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}

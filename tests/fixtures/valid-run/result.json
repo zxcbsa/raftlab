@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "20261026-2110-baseline-kill-leader",
+  "loadId": "L1",
+  "startedAt": "2026-10-26T13:10:12.000Z",
+  "endedAt": "2026-10-26T13:10:42.000Z",
+  "durationMs": 30000,
+  "warmupMs": 5000,
+  "config": {
+    "concurrency": 8,
+    "mix": { "put": 20, "get": 70, "append": 10 },
+    "keySpace": 1000,
+    "valueSize": 128,
+    "rateLimit": null
+  },
+  "counts": {
+    "total": 123456,
+    "ok": 123000,
+    "error": 456,
+    "byOp": { "get": 86000, "put": 25000, "append": 12456 }
+  },
+  "errors": {
+    "rate": 0.0037,
+    "byType": { "timeout": 400, "conn_reset": 56 }
+  },
+  "throughput": {
+    "total": 4115.2,
+    "byOp": { "get": 2866.7, "put": 833.3, "append": 415.2 }
+  },
+  "latencyMs": {
+    "all": { "p50": 1.2, "p90": 3.4, "p95": 5.0, "p99": 12.3, "p999": 40.1, "max": 120.0 },
+    "get": { "p50": 0.9, "p90": 2.5, "p95": 3.8, "p99": 8.1, "p999": 30.0, "max": 90.0 },
+    "put": { "p50": 2.1, "p90": 5.0, "p95": 8.0, "p99": 18.4, "p999": 55.0, "max": 150.0 },
+    "append": { "p50": 2.3, "p90": 5.5, "p95": 9.0, "p99": 20.2, "p999": 60.0, "max": 160.0 }
+  },
+  "notes": ["closed-loop client; coordinated omission not corrected"]
+}

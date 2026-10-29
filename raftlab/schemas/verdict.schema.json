@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raftlab.local/schemas/verdict.schema.json",
+  "title": "Verdict",
+  "type": "object",
+  "required": ["schemaVersion", "runId", "status", "checks", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "runId": { "type": "string" },
+    "status": { "enum": ["pass", "fail", "error"] },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "metric", "op", "threshold", "actual", "passed"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "enum": ["slo", "availability", "regression"] },
+          "metric": { "type": "string" },
+          "op": { "enum": ["<=", ">=", "<", ">", "==", "!="] },
+          "threshold": { "type": "number" },
+          "actual": { "type": "number" },
+          "passed": { "type": "boolean" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["passed", "failed"],
+      "additionalProperties": false,
+      "properties": {
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "baseline": {
+      "type": ["object", "null"],
+      "required": ["runId"],
+      "additionalProperties": false,
+      "properties": {
+        "runId": { "type": "string" },
+        "deltas": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "20261026-2110-baseline-kill-leader",
+  "status": "pass",
+  "checks": [
+    {
+      "id": "slo.latency.p99",
+      "type": "slo",
+      "metric": "latency.p99",
+      "op": "<=",
+      "threshold": 100.0,
+      "actual": 12.3,
+      "passed": true
+    },
+    {
+      "id": "slo.errors.rate",
+      "type": "slo",
+      "metric": "errors.rate",
+      "op": "<=",
+      "threshold": 0.02,
+      "actual": 0.0037,
+      "passed": true
+    },
+    {
+      "id": "availability.maxGapMs",
+      "type": "availability",
+      "metric": "availability.maxGapMs",
+      "op": "<=",
+      "threshold": 2000,
+      "actual": 812,
+      "passed": true
+    }
+  ],
+  "summary": { "passed": 3, "failed": 0 },
+  "baseline": null,
+  "artifacts": {
+    "report": "report.html",
+    "events": "events.json",
+    "metrics": "metrics.jsonl"
+  }
+}

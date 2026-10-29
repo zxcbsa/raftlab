@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raftlab.local/schemas/scenario.schema.json",
+  "title": "Scenario",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": { "const": "raftlab/v1" },
+    "kind": { "const": "Scenario" },
+    "metadata": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+        "description": { "type": "string", "maxLength": 512 },
+        "labels": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["seed", "cluster", "steps"],
+      "additionalProperties": false,
+      "properties": {
+        "seed": { "type": "integer", "minimum": 0 },
+        "cluster": { "$ref": "#/definitions/cluster" },
+        "defaults": { "$ref": "#/definitions/defaults" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/step" }
+        },
+        "assertions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/assertion" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "duration": { "type": "string", "pattern": "^[0-9]+(ms|s|m)$" },
+    "cluster": {
+      "type": "object",
+      "required": ["nodes"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": { "type": "integer", "minimum": 2, "maximum": 9 },
+        "maxRaftState": { "type": "integer", "minimum": 0 },
+        "mode": { "enum": ["fork", "per-node"] },
+        "build": { "enum": ["Release", "Debug"] },
+        "logLevel": { "enum": ["off", "info", "debug"] },
+        "basePort": { "type": "integer", "minimum": 1024, "maximum": 65535 }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timeout": { "$ref": "#/definitions/duration" },
+        "onError": { "enum": ["abort", "continue"] }
+      }
+    },
+    "mix": {
+      "type": "object",
+      "required": ["put", "get", "append"],
+      "additionalProperties": false,
+      "properties": {
+        "put": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "get": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "append": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "after": {
+      "oneOf": [
+        { "$ref": "#/definitions/duration" },
+        {
+          "type": "object",
+          "required": ["ref", "elapsed"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "elapsed": { "$ref": "#/definitions/duration" }
+          }
+        }
+      ]
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+        "action": {
+          "enum": [
+            "cluster.up",
+            "cluster.down",
+            "cluster.restart",
+            "wait.ready",
+            "workload.run",
+            "workload.wait",
+            "chaos.inject",
+            "assert.availability",
+            "sleep"
+          ]
+        },
+        "after": { "$ref": "#/definitions/after" },
+        "timeout": { "$ref": "#/definitions/duration" },
+        "onError": { "enum": ["abort", "continue"] },
+        "background": { "type": "boolean" },
+        "require": { "enum": ["leader", "all_nodes"] },
+        "target": { "type": "string", "pattern": "^(leader|follower|all|node[0-9]+)$" },
+        "fault": { "enum": ["kill", "stop", "resume", "restart", "partition", "delay", "loss"] },
+        "loadId": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,32}$" },
+        "duration": { "$ref": "#/definitions/duration" },
+        "warmup": { "$ref": "#/definitions/duration" },
+        "concurrency": { "type": "integer", "minimum": 1, "maximum": 1024 },
+        "mix": { "$ref": "#/definitions/mix" },
+        "keySpace": { "type": "integer", "minimum": 1 },
+        "valueSize": { "type": "integer", "minimum": 1 },
+        "rate": { "type": "number", "exclusiveMinimum": 0 },
+        "ref": { "type": "string" },
+        "maxGapMs": { "type": "integer", "minimum": 0 },
+        "maxErrorRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "direction": { "enum": ["in", "out", "both"] },
+        "latencyMs": { "type": "integer", "minimum": 0 },
+        "percent": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "action": { "const": "workload.run" } } },
+          "then": { "required": ["loadId", "duration", "concurrency", "mix"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "workload.wait" } } },
+          "then": { "required": ["ref"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "chaos.inject" } } },
+          "then": { "required": ["fault", "target"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "assert.availability" } } },
+          "then": { "required": ["maxGapMs", "maxErrorRate"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "wait.ready" } } },
+          "then": { "required": ["require"] }
+        }
+      ]
+    },
+    "assertion": {
+      "type": "object",
+      "required": ["metric", "op", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "metric": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9_.]*$" },
+        "op": { "enum": ["<=", ">=", "<", ">", "==", "!="] },
+        "value": {
+          "oneOf": [
+            { "$ref": "#/definitions/duration" },
+            { "type": "number" }
+          ]
+        }
+      }
+    }
+  }
+}

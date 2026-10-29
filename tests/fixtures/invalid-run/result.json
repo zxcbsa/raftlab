@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "20261026-2110-baseline-kill-leader",
+  "loadId": "L1",
+  "startedAt": "2026-10-26T13:10:12.000Z",
+  "endedAt": "2026-10-26T13:10:42.000Z",
+  "durationMs": 30000,
+  "warmupMs": 5000,
+  "config": {
+    "concurrency": 8,
+    "mix": { "put": 20, "get": 70, "append": 10 },
+    "keySpace": 1000,
+    "valueSize": 128
+  },
+  "counts": {
+    "total": 1000,
+    "ok": 900,
+    "error": 5,
+    "byOp": { "get": 700, "put": 200, "append": 100 }
+  },
+  "errors": {
+    "rate": 0.005,
+    "byType": { "timeout": 5 }
+  },
+  "throughput": {
+    "total": 100.0,
+    "byOp": { "get": 70.0, "put": 20.0, "append": 10.0 }
+  },
+  "latencyMs": {
+    "all": { "p50": 1.2, "p90": 3.4, "p95": 5.0, "p99": 1.0, "p999": 40.1, "max": 120.0 }
+  }
+}

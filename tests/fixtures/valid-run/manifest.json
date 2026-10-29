@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "20261026-2110-baseline-kill-leader",
+  "createdAt": "2026-10-26T13:10:00.123Z",
+  "scenario": {
+    "name": "baseline-kill-leader",
+    "path": "scenarios/baseline-kill-leader.yaml",
+    "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "seed": 42,
+  "host": {
+    "hostname": "zz-VMware-Virtual-Platform",
+    "os": "Ubuntu 24.04.4 LTS",
+    "cpuCores": 2,
+    "memTotalMB": 3863
+  },
+  "build": {
+    "type": "Release",
+    "gitCommit": "c11e580",
+    "gitDirty": true,
+    "compiler": "g++ 13.3.0",
+    "protobuf": "3.21.12"
+  },
+  "cluster": {
+    "nodes": 3,
+    "maxRaftState": 500,
+    "logLevel": "off",
+    "basePort": 29016
+  },
+  "tool": {
+    "name": "raftlab",
+    "version": "0.1.0"
+  }
+}

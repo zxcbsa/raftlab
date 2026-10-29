@@ -1,0 +1,70 @@
+apiVersion: raftlab/v1
+kind: Scenario
+metadata:
+  name: restart-node
+  description: per-node 模式：压测中 kill node0，再把它重新拉起来
+  labels:
+    suite: p1
+
+spec:
+  seed: 7
+  cluster:
+    nodes: 3
+    maxRaftState: 50000
+    mode: per-node
+    build: Debug
+    logLevel: "off"
+  defaults:
+    timeout: 40s
+    onError: abort
+
+  steps:
+    - id: up
+      action: cluster.up
+
+    - id: ready
+      action: wait.ready
+      require: leader
+      timeout: 25s
+
+    - id: load
+      action: workload.run
+      loadId: L1
+      duration: 25s
+      warmup: 3s
+      concurrency: 4
+      mix: {put: 20, get: 70, append: 10}
+      keySpace: 500
+      valueSize: 128
+      background: true
+
+    - id: kill0
+      action: chaos.inject
+      fault: kill
+      target: node0
+      after: {ref: load, elapsed: 6s}
+
+    - id: restart0
+      action: chaos.inject
+      fault: restart
+      target: node0
+      after: {ref: load, elapsed: 12s}
+
+    - id: join
+      action: workload.wait
+      ref: load
+      timeout: 60s
+
+    - id: avail
+      action: assert.availability
+      maxGapMs: 5000
+      maxErrorRate: 0.30
+
+    - id: down
+      action: cluster.down
+      onError: continue
+
+  assertions:
+    - metric: errors.rate
+      op: "<="
+      value: 0.30

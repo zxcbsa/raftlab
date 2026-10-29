@@ -1,0 +1,2 @@
+{"ts":"2026-10-26T13:10:13.000Z","tRelMs":1000,"node":0,"cpuPct":45.2,"rssMB":120.3,"term":3,"isLeader":true,"commitIndex":120,"logSize":120,"snapshotIndex":0}
+{"ts":"2026-10-26T13:10:13.000Z","tRelMs":1000,"node":1,"cpuPct":31.8,"rssMB":118.7,"term":3,"isLeader":false,"commitIndex":120,"logSize":120,"snapshotIndex":0}

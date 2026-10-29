@@ -1,0 +1,17 @@
+apiVersion: raftlab/v1
+kind: Scenario
+metadata:
+  name: broken-scenario
+
+spec:
+  seed: 42
+  cluster:
+    nodes: 3
+
+  steps:
+    - id: load
+      action: workload.run
+      loadId: L1
+      duration: 10s
+      concurrency: 4
+      mix: {put: 10, get: 60, append: 20}

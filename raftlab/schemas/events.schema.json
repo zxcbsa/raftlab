@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raftlab.local/schemas/events.schema.json",
+  "title": "Event timeline",
+  "type": "object",
+  "required": ["schemaVersion", "runId", "events"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "runId": { "type": "string" },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ts", "tRelMs", "source", "type", "target"],
+        "additionalProperties": false,
+        "properties": {
+          "ts": { "type": "string", "format": "date-time" },
+          "tRelMs": { "type": "integer", "minimum": 0 },
+          "source": { "enum": ["orchestrator", "cluster", "chaos", "workload", "telemetry"] },
+          "type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$" },
+          "target": { "type": "string", "minLength": 1 },
+          "detail": { "type": "object" }
+        }
+      }
+    }
+  }
+}

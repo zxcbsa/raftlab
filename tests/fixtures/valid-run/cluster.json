@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "configFile": "runs/20261026-2110-baseline-kill-leader/test.conf",
+  "startedAt": "2026-10-26T13:10:01.000Z",
+  "readyAt": "2026-10-26T13:10:11.200Z",
+  "nodes": [
+    { "index": 0, "pid": 4101, "ip": "127.0.1.1", "port": 29016, "logFile": "logs/node0.log" },
+    { "index": 1, "pid": 4102, "ip": "127.0.1.1", "port": 29017, "logFile": "logs/node1.log" },
+    { "index": 2, "pid": 4103, "ip": "127.0.1.1", "port": 29018, "logFile": "logs/node2.log" }
+  ]
+}

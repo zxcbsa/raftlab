@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raftlab.local/schemas/cluster.schema.json",
+  "title": "Cluster snapshot",
+  "type": "object",
+  "required": ["schemaVersion", "startedAt", "nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "configFile": { "type": "string" },
+    "mode": { "enum": ["fork", "per-node"] },
+    "maxRaftState": { "type": "integer", "minimum": 0 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "readyAt": { "type": "string", "format": "date-time" },
+    "nodes": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["index", "pid", "ip", "port", "logFile"],
+        "additionalProperties": false,
+        "properties": {
+          "index": { "type": "integer", "minimum": 0 },
+          "pid": { "type": "integer", "minimum": 1 },
+          "ip": { "type": "string", "format": "ipv4" },
+          "port": { "type": "integer", "minimum": 1024, "maximum": 65535 },
+          "logFile": { "type": "string" }
+        }
+      }
+    }
+  }
+}

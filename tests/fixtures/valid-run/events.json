@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "20261026-2110-baseline-kill-leader",
+  "events": [
+    {
+      "ts": "2026-10-26T13:10:22.000Z",
+      "tRelMs": 10000,
+      "source": "chaos",
+      "type": "fault.inject",
+      "target": "node0",
+      "detail": { "fault": "kill", "pid": 4101 }
+    },
+    {
+      "ts": "2026-10-26T13:10:22.430Z",
+      "tRelMs": 10430,
+      "source": "telemetry",
+      "type": "leader.change",
+      "target": "node1",
+      "detail": { "from": 0, "to": 1, "term": 4 }
+    },
+    {
+      "ts": "2026-10-26T13:10:22.812Z",
+      "tRelMs": 10812,
+      "source": "workload",
+      "type": "workload.first_success_after_fault",
+      "target": "L1"
+    }
+  ]
+}
